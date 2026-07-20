@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>How I Express Myself — Script</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #0a0a0c;
+    --muted: #6b7480;
+    --accent: #169ac7;
+    --accent-ink: #10769a;
+    --line: #e4e7ea;
+    --chip-bg: #f2f4f6;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0a0c;
+      --ink: #f4f5f6;
+      --muted: #8b95a1;
+      --accent: #169ac7;
+      --accent-ink: #3db4de;
+      --line: #26262c;
+      --chip-bg: #17171c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0a0a0c;
+    --ink: #f4f5f6;
+    --muted: #8b95a1;
+    --accent: #169ac7;
+    --accent-ink: #3db4de;
+    --line: #26262c;
+    --chip-bg: #17171c;
+  }
+  :root[data-theme="light"] {
+    --bg: #ffffff;
+    --ink: #0a0a0c;
+    --muted: #6b7480;
+    --accent: #169ac7;
+    --accent-ink: #10769a;
+    --line: #e4e7ea;
+    --chip-bg: #f2f4f6;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 0 1.25rem 5rem;
+  }
+
+  header.top {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: 0.85rem 1.25rem;
+  }
+  .top-inner {
+    max-width: 40rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .top h1 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    white-space: nowrap;
+  }
+  .top .meta {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  .mode {
+    display: flex;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px;
+    flex-shrink: 0;
+  }
+  .mode button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .mode button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .mode button[aria-pressed="true"] {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .intro {
+    padding: 2.25rem 0 0.5rem;
+  }
+  .intro .bar {
+    width: 40px;
+    height: 6px;
+    background: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+  .intro h2 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 0.4rem;
+    text-wrap: balance;
+  }
+  .intro p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  .cue-hint { display: none; }
+  body[data-mode="cue"] .cue-hint { display: inline; }
+
+  section.slide {
+    border-top: 1px solid var(--line);
+    padding: 1.6rem 0 1.9rem;
+    margin-top: 1.6rem;
+  }
+  section.slide:first-of-type { margin-top: 2rem; }
+
+  .kicker-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+  .kicker-row .tick {
+    width: 18px;
+    height: 4px;
+    background: var(--accent);
+    align-self: center;
+    flex-shrink: 0;
+  }
+  .kicker {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+  .num {
+    margin-left: auto;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+
+  .headline {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 0.7rem 0 0;
+    text-wrap: balance;
+  }
+
+  .script {
+    margin-top: 0.9rem;
+  }
+  .script p {
+    margin: 0 0 0.8rem;
+    font-size: 1.02rem;
+    line-height: 1.65;
+    max-width: 62ch;
+  }
+  .script p:last-child { margin-bottom: 0; }
+  .lead { font-weight: 600; }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1rem;
+  }
+  .chips span {
+    font-size: 0.74rem;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--chip-bg);
+    border: 1px solid var(--line);
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .skip {
+    border-top: 1px dashed var(--line);
+    margin-top: 1.6rem;
+    padding-top: 0.5rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  body[data-mode="cue"] .script p:not(.lead) { display: none; }
+  body[data-mode="cue"] .lead { color: var(--muted); font-weight: 600; }
+  body[data-mode="cue"] section.slide.peek .script p:not(.lead) { display: block; }
+  body[data-mode="cue"] section.slide.peek .lead { color: var(--ink); }
+  body[data-mode="cue"] section.slide { cursor: pointer; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    margin-top: 1.6rem;
+    padding-top: 1.2rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  footer p { margin: 0 0 0.4rem; }
+
+  .prompt-launch {
+    appearance: none;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent-ink);
+    font-size: 0.8rem;
+    line-height: 1;
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .prompt-launch:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* ---- Teleprompter ---- */
+  .prompter {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: #050505;
+    color: #f4f5f6;
+  }
+  .prompter.open { display: block; }
+  .p-scroll {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: calc(3.2rem + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 38vh 1.4rem 65vh;
+  }
+  .p-inner {
+    max-width: 38rem;
+    margin: 0 auto;
+    font-size: var(--p-fs, 1.6rem);
+  }
+  .p-kicker {
+    color: #3db4de;
+    font-size: 0.5em;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 2.4em 0 0.7em;
+  }
+  .p-slide:first-child .p-kicker { margin-top: 0; }
+  .p-inner p {
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    margin: 0 0 0.55em;
+  }
+  .p-inner p.p-break {
+    margin-bottom: 1.1em;
+  }
+  .p-end {
+    color: #8b95a1;
+    font-size: 0.55em;
+    letter-spacing: 0.2em;
+    margin-top: 3em;
+    text-align: center;
+  }
+  .p-fade-top, .p-fade-bottom {
+    position: absolute;
+    left: 0; right: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .p-fade-top {
+    top: 0; height: 16vh;
+    background: linear-gradient(#050505, rgba(5,5,5,0));
+  }
+  .p-fade-bottom {
+    bottom: calc(3.2rem + env(safe-area-inset-bottom)); height: 22vh;
+    background: linear-gradient(rgba(5,5,5,0), #050505);
+  }
+  .p-marker {
+    position: absolute;
+    left: 0;
+    top: 38vh;
+    width: 14px; height: 4px;
+    background: #169ac7;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .p-hint {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    background: rgba(22,154,199,0.14);
+    border: 1px solid rgba(22,154,199,0.5);
+    color: #9fd8ec;
+    font-size: 0.85rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 999px;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .prompter.running .p-hint { opacity: 0; pointer-events: none; }
+
+  /* Tap mode: highlight current slide, dim others */
+  .prompter[data-pmode="tap"] .p-slide {
+    opacity: 0.18;
+    transition: opacity 0.35s ease;
+  }
+  .prompter[data-pmode="tap"] .p-slide.active {
+    opacity: 1;
+  }
+  .prompter[data-pmode="tap"] .p-marker { display: none; }
+
+  /* Controls */
+  .p-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 0.5rem calc(0.4rem + env(safe-area-inset-bottom));
+    border-top: 1px solid #26262c;
+    background: #0a0a0c;
+    flex-wrap: nowrap;
+  }
+  .p-controls button {
+    appearance: none;
+    border: 1px solid #26262c;
+    background: #17171c;
+    color: #f4f5f6;
+    font-size: 0.85rem;
+    line-height: 1;
+    min-width: 1.8rem;
+    padding: 0.38rem 0.28rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .p-controls button:focus-visible { outline: 2px solid #169ac7; outline-offset: 1px; }
+  .p-controls button:active { background: #222; }
+
+  /* Mode toggle (tap / auto) */
+  .p-mode-toggle {
+    display: flex;
+    border: 1px solid #26262c;
+    border-radius: 999px;
+    padding: 2px;
+    flex-shrink: 0;
+  }
+  .p-mode-toggle button {
+    border: 0;
+    background: transparent;
+    color: #8b95a1;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.32rem 0.6rem;
+    border-radius: 999px;
+    min-width: unset;
+  }
+  .p-mode-toggle button[aria-pressed="true"] {
+    background: #169ac7;
+    color: #fff;
+  }
+
+  /* Speed presets */
+  .p-speeds {
+    display: flex;
+    border: 1px solid #26262c;
+    border-radius: 999px;
+    padding: 2px;
+    flex-shrink: 0;
+  }
+  .p-speeds button {
+    border: 0;
+    background: transparent;
+    color: #8b95a1;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.32rem 0.55rem;
+    border-radius: 999px;
+    min-width: unset;
+  }
+  .p-speeds button[aria-pressed="true"] {
+    background: #3db4de;
+    color: #050505;
+  }
+
+  /* Counter / timer */
+  .p-counter, .p-timer {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.78rem;
+    color: #8b95a1;
+    min-width: 2.4rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .p-spacer { flex: 1; min-width: 0; }
+  .p-timer { color: #f4f5f6; }
+
+  /* Hide mode-specific elements */
+  .prompter[data-pmode="tap"] .p-speeds { display: none; }
+  .prompter[data-pmode="tap"] .p-timer { display: none; }
+  .prompter[data-pmode="auto"] .p-counter { display: none; }
+  .prompter[data-pmode="auto"] #p-prev,
+  .prompter[data-pmode="auto"] #p-next { display: none; }
+
+  .p-close { margin-left: 0; }
+  @media (max-width: 400px) {
+    .p-controls #p-smaller,
+    .p-controls #p-bigger { display: none; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mode button { transition: background 0.15s ease, color 0.15s ease; }
+    .p-mode-toggle button { transition: background 0.15s ease, color 0.15s ease; }
+    .p-speeds button { transition: background 0.15s ease, color 0.15s ease; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <h1>How I Express Myself
+      <span class="meta">14 slides · 約550語 · 4–5分</span>
+    </h1>
+    <div class="mode" role="group" aria-label="表示モード">
+      <button id="btn-full" aria-pressed="true">全文</button>
+      <button id="btn-cue" aria-pressed="false">カンペ</button>
+    </div>
+    <button id="btn-prompt" class="prompt-launch" aria-label="プロンプターを開く">▶</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="intro">
+    <div class="bar"></div>
+    <h2>発表スクリプト</h2>
+    <p>太字が各スライドの「最初の1文」。<span class="cue-hint">カンペモード中はスライドをタップすると全文が見られます。</span></p>
+  </div>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">Title</span><span class="num">01</span></div>
+    <h3 class="headline" lang="en">HOW I EXPRESS MYSELF — Coding.</h3>
+    <div class="script" lang="en">
+      <p class="lead">How do I express myself? My answer is simple: coding.</p>
+      <p>With code, I can take an idea from my head and make something real. Today, I want to show you what coding means to me.</p>
+    </div>
+    <div class="chips"><span>idea → real</span><span>what coding means</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">My Curiosity</span><span class="num">02</span></div>
+    <h3 class="headline" lang="en">I show my curiosity through code.</h3>
+    <div class="script" lang="en">
+      <p class="lead">Through code, I show my curiosity. I always ask questions. How does this work? Can I make it easier?</p>
+      <p>When I am curious, I do not stop at reading. I build a small version with my own hands. Then I can find the real problem. This is how I think.</p>
+    </div>
+    <div class="chips"><span>questions</span><span>small version</span><span>real problem</span></div>
+  </section>
+
+  <p class="skip">Skip — 03 How I Think（02に統合済み）</p>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">The Start</span><span class="num">04</span></div>
+    <h3 class="headline" lang="en">It started with a river in my hometown.</h3>
+    <div class="script" lang="en">
+      <p class="lead">My curiosity started with a river in Mishima, my hometown.</p>
+      <p>One day, I asked: can moving water make electricity? So I built a small hydroelectric generator.</p>
+    </div>
+    <div class="chips"><span>water → electricity?</span><span>generator</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">My Teacher's Words</span><span class="num">05</span></div>
+    <h3 class="headline" lang="en">"Engineering is a way to make people happy."</h3>
+    <div class="script" lang="en">
+      <p class="lead">I could not build it alone, so I asked for help.</p>
+      <p>I made it with Professor Kurebayashi, an engineering professor at Shizuoka University. He taught me the science behind it.</p>
+      <p>But his most important lesson was: "Engineering is a way to make people happy."</p>
+    </div>
+    <div class="chips"><span>"make people happy"</span><span>Kurebayashi</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">School Festival</span><span class="num">06</span></div>
+    <h3 class="headline" lang="en">I made a cash register app for our school festival.</h3>
+    <div class="script" lang="en">
+      <p class="lead">The subject changed — from rivers to software — but his words stayed with me.</p>
+      <p>After I entered this school, I found a problem I could solve. At our school festival, one shop could not easily count their money and sales. So I made a cash register app.</p>
+    </div>
+    <div class="chips"><span>words stayed</span><span>cash register app</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">Design for People</span><span class="num">07</span></div>
+    <h3 class="headline" lang="en">I designed every detail for the users.</h3>
+    <div class="script" lang="en">
+      <p class="lead">I did not only make it work.</p>
+      <p>I added a long-press button, so people do not pay by mistake. I added a sales graph, so the shop can see what sells well. Every detail came from one question: how can this help people?</p>
+    </div>
+    <div class="chips"><span>long press</span><span>sales graph</span><span>help people?</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">A Hard Lesson</span><span class="num">08</span></div>
+    <h3 class="headline" lang="en">The problem was not the code. It was how people used it.</h3>
+    <div class="script" lang="en">
+      <p class="lead">But the app did not solve everything. The problem was not a bug.</p>
+      <p>People give and take cash very fast, but my app made them stop and take out a phone. Good functions do not always make a good product. A product must fit people's actions.</p>
+    </div>
+    <div class="chips"><span>not a bug</span><span>stop, take out a phone</span><span>fit actions</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">Why I Continue</span><span class="num">09</span></div>
+    <h3 class="headline" lang="en">That small change made me want to build more.</h3>
+    <div class="script" lang="en">
+      <p class="lead">But the long-press button stayed. People used it naturally, like a habit.</p>
+      <p>For the first time, I felt that my work can change real life. I wanted to build bigger things, with other people.</p>
+    </div>
+    <div class="chips"><span>habit</span><span>change real life</span><span>bigger, with people</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">The Next Year</span><span class="num">10</span></div>
+    <h3 class="headline" lang="en">The next year, we built a bigger system as a team.</h3>
+    <div class="script" lang="en">
+      <p class="lead">The next year, I worked with a team, and it was very enjoyable.</p>
+      <p>Step by step, my dream became bigger. Now I want to build bigger things that really help people.</p>
+    </div>
+    <div class="chips"><span>team</span><span>dream became bigger</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">A Powerful Tool</span><span class="num">11</span></div>
+    <h3 class="headline" lang="en">AI is powerful.</h3>
+    <div class="script" lang="en">
+      <p class="lead">That teamwork made me want to build even bigger things for people. Today, I look at a very powerful tool: AI. It can write, code, draw, and talk. It is changing our lives very fast.</p>
+      <p>But some people are afraid. They ask: will AI take our jobs?</p>
+    </div>
+    <div class="chips"><span>write, code, draw, talk</span><span>afraid? jobs?</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">My AI: Kanimaru</span><span class="num">12</span></div>
+    <h3 class="headline" lang="en">Now I am making an AI that remembers me.</h3>
+    <div class="script" lang="en">
+      <p class="lead">So, what kind of AI do I want to make?</p>
+      <p>My answer is "Kanimaru", an AI with memory. It reads my chat history and my notes, so it knows what I did and how I felt. It does not forget me.</p>
+    </div>
+    <div class="chips"><span>memory</span><span>chat &amp; notes</span><span>does not forget</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">Its Memory</span><span class="num">13</span></div>
+    <h3 class="headline" lang="en">It remembered one of my hardest days.</h3>
+    <div class="script" lang="en">
+      <p class="lead">For example, I had to present a business idea to SoftBank executives, and then to the president of jig.jp. It was very hard for me.</p>
+      <p>Later, Kanimaru remembered that day and said: let's practice together. It was like a friend who knows my story.</p>
+    </div>
+    <div class="chips"><span>SoftBank / jig.jp</span><span>hard</span><span>practice together</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">AI as a Friend</span><span class="num">14</span></div>
+    <h3 class="headline" lang="en">Not an AI that takes our jobs. A friend, like Doraemon.</h3>
+    <div class="script" lang="en">
+      <p class="lead">I do not want AI that takes people's jobs. I want AI that works beside us and plays with us, like Doraemon.</p>
+      <p>Doraemon inspires me: he is not a tool, he is a friend. Kanimaru is my first step.</p>
+    </div>
+    <div class="chips"><span>beside us, play</span><span>Doraemon inspires me</span><span>first step</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker-row"><span class="tick"></span><span class="kicker">My Answer</span><span class="num">15</span></div>
+    <h3 class="headline" lang="en">Coding is how I express myself.</h3>
+    <div class="script" lang="en">
+      <p class="lead">So, how do I express myself? Through coding.</p>
+      <p>Everything I make shows my questions and my dreams.</p>
+      <p>In the future, I want to make an AI that is a friend for everyone. This is how I express myself. Thank you.</p>
+    </div>
+    <div class="chips"><span>my questions &amp; dreams</span><span>in the future</span><span>Thank you</span></div>
+  </section>
+
+  <footer>
+    <p>Q&amp;A 想定: Who inspires you? → 05 / 14。 What is Kanimaru? → 12。 Why Doraemon? → 14。</p>
+    <p>詰まったら別の簡単な言い方でOK。完璧な再現より「自分の話をしている」感じを優先。</p>
+  </footer>
+</div>
+
+<div class="prompter" id="prompter" data-pmode="tap" role="dialog" aria-label="テレプロンプター">
+  <div class="p-scroll" id="p-scroll">
+    <div class="p-inner" id="p-inner"></div>
+  </div>
+  <div class="p-fade-top"></div>
+  <div class="p-fade-bottom"></div>
+  <div class="p-marker"></div>
+  <div class="p-hint" id="p-hint">タップで次へ</div>
+  <div class="p-controls">
+    <div class="p-mode-toggle" role="group" aria-label="プロンプターモード">
+      <button id="pm-tap" aria-pressed="true">タップ</button>
+      <button id="pm-auto" aria-pressed="false">自動</button>
+    </div>
+    <div class="p-speeds" id="p-speeds" role="group" aria-label="スクロール速度">
+      <button data-speed="0.6" aria-pressed="false">遅</button>
+      <button data-speed="1.0" aria-pressed="true">中</button>
+      <button data-speed="1.6" aria-pressed="false">速</button>
+    </div>
+    <span class="p-counter" id="p-counter">1 / 14</span>
+    <span class="p-spacer"></span>
+    <button id="p-smaller" aria-label="文字を小さく">A−</button>
+    <button id="p-bigger" aria-label="文字を大きく">A＋</button>
+    <button id="p-prev" aria-label="前のスライド">‹</button>
+    <button id="p-next" aria-label="次のスライド">›</button>
+    <button id="p-reset" aria-label="最初に戻る">↺</button>
+    <span class="p-timer" id="p-timer">0:00</span>
+    <button class="p-close" id="p-close" aria-label="閉じる">✕</button>
+  </div>
+</div>
+
+<script>
+  /* ---- Page mode toggle (全文 / カンペ) ---- */
+  const btnFull = document.getElementById('btn-full');
+  const btnCue = document.getElementById('btn-cue');
+  const setMode = (m) => {
+    document.body.dataset.mode = m;
+    btnFull.setAttribute('aria-pressed', String(m === 'full'));
+    btnCue.setAttribute('aria-pressed', String(m === 'cue'));
+    try { localStorage.setItem('script-mode', m); } catch (e) {}
+    if (m === 'full') {
+      document.querySelectorAll('section.slide.peek').forEach(s => s.classList.remove('peek'));
+    }
+  };
+  btnFull.addEventListener('click', () => setMode('full'));
+  btnCue.addEventListener('click', () => setMode('cue'));
+  document.querySelectorAll('section.slide').forEach(sec => {
+    sec.addEventListener('click', () => {
+      if (document.body.dataset.mode === 'cue') sec.classList.toggle('peek');
+    });
+  });
+  let saved = 'full';
+  try { saved = localStorage.getItem('script-mode') || 'full'; } catch (e) {}
+  setMode(saved === 'cue' ? 'cue' : 'full');
+
+  /* ---- Teleprompter ---- */
+  const prompter = document.getElementById('prompter');
+  const pScroll = document.getElementById('p-scroll');
+  const pInner = document.getElementById('p-inner');
+  const pTimer = document.getElementById('p-timer');
+  const pCounter = document.getElementById('p-counter');
+  const pHint = document.getElementById('p-hint');
+
+  let pmode = 'tap';
+  let playing = false, speed = 1.0, fontRem = 1.6;
+  let rafId = null, lastT = null, elapsed = 0, scrollPos = 0;
+  let wakeLock = null;
+  let slideEls = [];
+  let currentIdx = 0;
+  const BASE_PX_PER_SEC = 42;
+
+  function buildPrompter() {
+    pInner.innerHTML = '';
+    slideEls = [];
+    document.querySelectorAll('section.slide').forEach(sec => {
+      const div = document.createElement('div');
+      div.className = 'p-slide';
+      const k = document.createElement('div');
+      k.className = 'p-kicker';
+      k.textContent = sec.querySelector('.num').textContent + ' · ' + sec.querySelector('.kicker').textContent;
+      div.appendChild(k);
+
+      const paras = sec.querySelectorAll('.script p');
+      paras.forEach((p, pi) => {
+        const sentences = p.textContent.split(/(?<=[.?!"""])\s+/).filter(s => s.trim());
+        sentences.forEach(s => {
+          const q = document.createElement('p');
+          q.lang = 'en';
+          q.textContent = s.trim();
+          div.appendChild(q);
+        });
+        if (pi < paras.length - 1) {
+          const last = div.lastElementChild;
+          if (last) last.classList.add('p-break');
+        }
+      });
+      pInner.appendChild(div);
+      slideEls.push(div);
+    });
+    const end = document.createElement('div');
+    end.className = 'p-end';
+    end.textContent = 'END';
+    pInner.appendChild(end);
+  }
+
+  function fmt(s) {
+    const m = Math.floor(s / 60), r = Math.floor(s % 60);
+    return m + ':' + String(r).padStart(2, '0');
+  }
+
+  function updateCounter() {
+    pCounter.textContent = (currentIdx + 1) + ' / ' + slideEls.length;
+  }
+
+  /* ---- Tap mode ---- */
+  function goToSlide(idx) {
+    if (idx < 0 || idx >= slideEls.length) return;
+    currentIdx = idx;
+    slideEls.forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+    });
+    updateCounter();
+    const target = slideEls[idx];
+    const markerY = pScroll.clientHeight * 0.38;
+    const scrollTarget = target.offsetTop - markerY;
+    pScroll.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' });
+    scrollPos = Math.max(0, scrollTarget);
+  }
+
+  /* ---- Auto mode ---- */
+  function tick(t) {
+    if (!playing) return;
+    if (lastT !== null) {
+      const dt = (t - lastT) / 1000;
+      elapsed += dt;
+      scrollPos += BASE_PX_PER_SEC * speed * dt;
+      pScroll.scrollTop = scrollPos;
+      pTimer.textContent = fmt(elapsed);
+      if (pScroll.scrollTop >= pScroll.scrollHeight - pScroll.clientHeight - 1) {
+        setPlaying(false);
+      }
+    }
+    lastT = t;
+    rafId = requestAnimationFrame(tick);
+  }
+
+  async function setPlaying(v) {
+    playing = v;
+    prompter.classList.toggle('running', v);
+    if (pmode === 'auto') {
+      pHint.textContent = v ? '' : 'タップで再開';
+    }
+    if (v) {
+      scrollPos = pScroll.scrollTop;
+      lastT = null;
+      rafId = requestAnimationFrame(tick);
+      try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+    } else {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+      if (wakeLock) { try { wakeLock.release(); } catch (e) {} wakeLock = null; }
+    }
+  }
+
+  /* ---- Mode switching ---- */
+  function setPrompterMode(m) {
+    pmode = m;
+    prompter.dataset.pmode = m;
+    document.getElementById('pm-tap').setAttribute('aria-pressed', String(m === 'tap'));
+    document.getElementById('pm-auto').setAttribute('aria-pressed', String(m === 'auto'));
+    setPlaying(false);
+
+    if (m === 'tap') {
+      pHint.textContent = 'タップで次へ';
+      prompter.classList.remove('running');
+      goToSlide(currentIdx);
+    } else {
+      pHint.textContent = 'タップでスタート';
+      slideEls.forEach(el => {
+        el.classList.remove('active');
+      });
+    }
+  }
+
+  document.getElementById('pm-tap').addEventListener('click', () => setPrompterMode('tap'));
+  document.getElementById('pm-auto').addEventListener('click', () => setPrompterMode('auto'));
+
+  /* ---- Speed presets ---- */
+  document.querySelectorAll('.p-speeds button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      speed = parseFloat(btn.dataset.speed);
+      document.querySelectorAll('.p-speeds button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+    });
+  });
+
+  /* ---- Open / close ---- */
+  document.getElementById('btn-prompt').addEventListener('click', () => {
+    buildPrompter();
+    pInner.style.fontSize = fontRem + 'rem';
+    prompter.classList.add('open');
+    pScroll.scrollTop = 0;
+    scrollPos = 0; elapsed = 0; currentIdx = 0;
+    pTimer.textContent = '0:00';
+    document.body.style.overflow = 'hidden';
+    setPrompterMode(pmode);
+  });
+
+  function closePrompter() {
+    setPlaying(false);
+    prompter.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('p-close').addEventListener('click', closePrompter);
+
+  /* ---- Scroll area interaction ---- */
+  let pausedByTouch = false;
+
+  pScroll.addEventListener('click', () => {
+    if (pausedByTouch) { pausedByTouch = false; return; }
+    if (pmode === 'tap') {
+      prompter.classList.add('running');
+      if (currentIdx < slideEls.length - 1) {
+        goToSlide(currentIdx + 1);
+      } else {
+        goToSlide(0);
+      }
+    } else {
+      setPlaying(!playing);
+    }
+  });
+
+  pScroll.addEventListener('touchstart', () => {
+    if (pmode === 'auto' && playing) {
+      setPlaying(false);
+      pausedByTouch = true;
+    }
+  }, { passive: true });
+  pScroll.addEventListener('touchend', () => {
+    setTimeout(() => { pausedByTouch = false; }, 400);
+  }, { passive: true });
+
+  pScroll.addEventListener('scroll', () => {
+    if (pmode === 'auto' && !playing) {
+      scrollPos = pScroll.scrollTop;
+    }
+  }, { passive: true });
+
+  /* ---- Button controls ---- */
+  document.getElementById('p-smaller').addEventListener('click', () => {
+    fontRem = Math.max(1.1, Math.round((fontRem - 0.15) * 100) / 100);
+    pInner.style.fontSize = fontRem + 'rem';
+  });
+  document.getElementById('p-bigger').addEventListener('click', () => {
+    fontRem = Math.min(2.6, Math.round((fontRem + 0.15) * 100) / 100);
+    pInner.style.fontSize = fontRem + 'rem';
+  });
+  document.getElementById('p-prev').addEventListener('click', () => {
+    if (pmode === 'tap') {
+      goToSlide(currentIdx - 1);
+      prompter.classList.add('running');
+    } else {
+      setPlaying(false);
+      const prevTop = findPrevSlideTop();
+      pScroll.scrollTo({ top: prevTop, behavior: 'smooth' });
+      scrollPos = prevTop;
+    }
+  });
+  document.getElementById('p-next').addEventListener('click', () => {
+    if (pmode === 'tap') {
+      goToSlide(currentIdx + 1);
+      prompter.classList.add('running');
+    } else {
+      setPlaying(false);
+      const nextTop = findNextSlideTop();
+      pScroll.scrollTo({ top: nextTop, behavior: 'smooth' });
+      scrollPos = nextTop;
+    }
+  });
+  document.getElementById('p-reset').addEventListener('click', () => {
+    setPlaying(false);
+    currentIdx = 0;
+    elapsed = 0;
+    pTimer.textContent = '0:00';
+    if (pmode === 'tap') {
+      goToSlide(0);
+      pHint.textContent = 'タップで次へ';
+      prompter.classList.remove('running');
+    } else {
+      pScroll.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollPos = 0;
+      pHint.textContent = 'タップでスタート';
+      prompter.classList.remove('running');
+    }
+  });
+
+  function findPrevSlideTop() {
+    const cur = pScroll.scrollTop;
+    for (let i = slideEls.length - 1; i >= 0; i--) {
+      if (slideEls[i].offsetTop < cur - 10) return Math.max(0, slideEls[i].offsetTop - pScroll.clientHeight * 0.38);
+    }
+    return 0;
+  }
+  function findNextSlideTop() {
+    const cur = pScroll.scrollTop;
+    for (let i = 0; i < slideEls.length; i++) {
+      if (slideEls[i].offsetTop > cur + 10) return Math.max(0, slideEls[i].offsetTop - pScroll.clientHeight * 0.38);
+    }
+    return pScroll.scrollHeight;
+  }
+
+  /* ---- Keyboard ---- */
+  document.addEventListener('keydown', (e) => {
+    if (!prompter.classList.contains('open')) return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); document.getElementById('p-prev').click(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); document.getElementById('p-next').click(); }
+    if (e.key === ' ') {
+      e.preventDefault();
+      if (pmode === 'tap') {
+        prompter.classList.add('running');
+        goToSlide(currentIdx + 1);
+      } else {
+        setPlaying(!playing);
+      }
+    }
+    if (e.key === 'Escape') { e.preventDefault(); closePrompter(); }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && playing) setPlaying(false);
+  });
+</script>
+
+</body>
+</html>
